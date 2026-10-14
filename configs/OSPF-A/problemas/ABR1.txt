@@ -1,0 +1,56 @@
+! ==========================================================
+! Lab OSPF-A - ABR1 - COM OS DEFEITOS PLANTADOS (linhas '! >>>>> DEFEITO' indicam cada um)
+! Plataforma testada: Cisco IOL-XE 17.18 (CML2). Interfaces Ethernet0/x.
+! Uso: entre em 'configure terminal' e cole o bloco abaixo.
+! ==========================================================
+! --- Nome do equipamento
+hostname ABR1
+no ip domain lookup
+! --- Habilita roteamento IPv6 (pilha dupla)
+ipv6 unicast-routing
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+! --- Loopback0: endereco de gerencia / identificacao
+interface Loopback0
+ ip ospf 1 area 0
+ ip ospf network point-to-point
+ ospfv3 network point-to-point
+ ospfv3 1 ipv6 area 0
+ ip address 10.255.255.2 255.255.255.255
+ ipv6 address 2001:db8:acad:ffff::2/128
+ no shutdown
+interface Ethernet0/0
+ description Link para CORE
+ ip address 10.0.12.2 255.255.255.252
+ ipv6 address 2001:db8:acad:012::2/64
+ ip ospf 1 area 0
+! >>>>> DEFEITO A3: MTU 1400 x 1500 no CORE -> EXSTART/EXCHANGE
+ ip mtu 1400
+ ospfv3 1 ipv6 area 0
+ no shutdown
+interface Ethernet0/1
+ description Link para BR1
+ ip address 10.1.11.1 255.255.255.252
+ ipv6 address 2001:db8:acad:111::1/64
+ ip ospf 1 area 1
+ ospfv3 1 ipv6 area 1
+ no shutdown
+interface Ethernet0/2
+ description Link para BR2
+ ip address 10.1.12.1 255.255.255.252
+ ipv6 address 2001:db8:acad:112::1/64
+ ip ospf 1 area 1
+ ospfv3 1 ipv6 area 1
+ no shutdown
+! --- OSPFv2 (IPv4)
+router ospf 1
+ router-id 2.2.2.2
+ area 1 stub
+! --- OSPFv3 com address-family (IPv6)
+router ospfv3 1
+ address-family ipv6 unicast
+  router-id 2.2.2.2
+  area 1 stub
+ exit-address-family
+end

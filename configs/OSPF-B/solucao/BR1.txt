@@ -1,0 +1,68 @@
+! ==========================================================
+! Lab OSPF-B - BR1 - SOLUCAO - todos os tickets corrigidos
+! Plataforma testada: Cisco IOL-XE 17.18 (CML2). Interfaces Ethernet0/x.
+! Uso: entre em 'configure terminal' e cole o bloco abaixo.
+! ==========================================================
+hostname BR1
+no ip domain lookup
+ipv6 unicast-routing
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+interface Loopback0
+ ip ospf 1 area 1
+ ospfv3 1 ipv6 area 1
+ ip ospf network point-to-point
+ ospfv3 network point-to-point
+ ip address 10.255.255.5 255.255.255.255
+ ipv6 address 2001:db8:acad:ffff::5/128
+ no shutdown
+interface Loopback1
+ ip address 10.1.4.1 255.255.255.0
+ ipv6 address 2001:db8:acad:104::1/64
+ ip ospf 1 area 1
+ ospfv3 1 ipv6 area 1
+ ip ospf network point-to-point
+ ospfv3 network point-to-point
+ no shutdown
+interface Loopback2
+ ip address 10.1.5.1 255.255.255.0
+ ipv6 address 2001:db8:acad:105::1/64
+ ip ospf 1 area 1
+ ospfv3 1 ipv6 area 1
+ ip ospf network point-to-point
+ ospfv3 network point-to-point
+ no shutdown
+interface Loopback3
+ ip address 10.1.6.1 255.255.255.0
+ ipv6 address 2001:db8:acad:106::1/64
+ ip ospf 1 area 1
+ ospfv3 1 ipv6 area 1
+ ip ospf network point-to-point
+ ospfv3 network point-to-point
+ no shutdown
+interface Loopback4
+ ip address 10.1.7.1 255.255.255.0
+ ipv6 address 2001:db8:acad:107::1/64
+ ip ospf 1 area 1
+ ospfv3 1 ipv6 area 1
+ ip ospf network point-to-point
+ ospfv3 network point-to-point
+ no shutdown
+interface Ethernet0/0
+ description Link para ABR1
+ ip address 10.1.11.2 255.255.255.252
+ ipv6 address 2001:db8:acad:111::2/64
+ ip ospf 1 area 1
+ ospfv3 1 ipv6 area 1
+ bandwidth 1000000
+ no shutdown
+router ospf 1
+ router-id 11.11.11.11
+ auto-cost reference-bandwidth 10000
+router ospfv3 1
+ address-family ipv6 unicast
+  router-id 11.11.11.11
+  auto-cost reference-bandwidth 10000
+ exit-address-family
+end

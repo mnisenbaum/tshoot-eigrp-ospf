@@ -1,0 +1,48 @@
+! ==========================================================
+! Lab OSPF-A - CORE - SOLUCAO - todos os tickets corrigidos
+! Plataforma testada: Cisco IOL-XE 17.18 (CML2). Interfaces Ethernet0/x.
+! Uso: entre em 'configure terminal' e cole o bloco abaixo.
+! ==========================================================
+hostname CORE
+no ip domain lookup
+ipv6 unicast-routing
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+interface Loopback0
+ ip ospf 1 area 0
+ ip ospf network point-to-point
+ ospfv3 network point-to-point
+ ospfv3 1 ipv6 area 0
+ ip address 10.255.255.1 255.255.255.255
+ ipv6 address 2001:db8:acad:ffff::1/128
+ no shutdown
+interface Loopback1
+ ip address 10.0.10.1 255.255.255.0
+ ipv6 address 2001:db8:acad:010::1/64
+ ip ospf 1 area 0
+ ip ospf network point-to-point
+ ospfv3 network point-to-point
+ ospfv3 1 ipv6 area 0
+ no shutdown
+interface Ethernet0/0
+ description Link para ABR1
+ ip address 10.0.12.1 255.255.255.252
+ ipv6 address 2001:db8:acad:012::1/64
+ ip ospf 1 area 0
+ ospfv3 1 ipv6 area 0
+ no shutdown
+interface Ethernet0/1
+ description Link para ABR2
+ ip address 10.0.13.1 255.255.255.252
+ ipv6 address 2001:db8:acad:013::1/64
+ ip ospf 1 area 0
+ ospfv3 1 ipv6 area 0
+ no shutdown
+router ospf 1
+ router-id 1.1.1.1
+router ospfv3 1
+ address-family ipv6 unicast
+  router-id 1.1.1.1
+ exit-address-family
+end

@@ -1,0 +1,42 @@
+! ==========================================================
+! Lab EIGRP-A - BR2 - COM OS DEFEITOS PLANTADOS (linhas '! >>>>> DEFEITO' indicam cada um)
+! Plataforma testada: Cisco IOL-XE 17.18 (CML2). Interfaces Ethernet0/x.
+! Uso: entre em 'configure terminal' e cole o bloco abaixo.
+! ==========================================================
+! --- Nome do equipamento
+hostname BR2
+no ip domain lookup
+! --- Habilita roteamento IPv6 (pilha dupla)
+ipv6 unicast-routing
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+! --- Loopback0: endereco de gerencia / identificacao
+interface Loopback0
+ ip address 10.255.255.5 255.255.255.255
+ ipv6 address 2001:db8:acad:ffff::5/128
+ no shutdown
+! --- LAN simulada (loopback)
+interface Loopback1
+ ip address 10.12.1.1 255.255.255.0
+ ipv6 address 2001:db8:acad:1201::1/64
+ no shutdown
+interface Ethernet0/0
+ description Link para CORE2
+ ip address 10.0.14.2 255.255.255.252
+ ipv6 address 2001:db8:acad:014::2/64
+ no shutdown
+! --- EIGRP named mode - processo EMPRESA
+router eigrp EMPRESA
+ address-family ipv4 unicast autonomous-system 100
+  af-interface Ethernet0/0
+! >>>>> DEFEITO A2: uplink passivo -> nao envia hellos IPv4
+   passive-interface
+  exit-af-interface
+  network 10.0.0.0
+  eigrp router-id 12.12.12.12
+ exit-address-family
+ address-family ipv6 unicast autonomous-system 100
+  eigrp router-id 12.12.12.12
+ exit-address-family
+end

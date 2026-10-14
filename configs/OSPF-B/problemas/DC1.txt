@@ -1,0 +1,58 @@
+! ==========================================================
+! Lab OSPF-B - DC1 - COM OS DEFEITOS PLANTADOS (linhas '! >>>>> DEFEITO' indicam cada um)
+! Plataforma testada: Cisco IOL-XE 17.18 (CML2). Interfaces Ethernet0/x.
+! Uso: entre em 'configure terminal' e cole o bloco abaixo.
+! ==========================================================
+! --- Nome do equipamento
+hostname DC1
+no ip domain lookup
+! --- Habilita roteamento IPv6 (pilha dupla)
+ipv6 unicast-routing
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+! --- Loopback0: endereco de gerencia / identificacao
+interface Loopback0
+ ip ospf 1 area 2
+ ospfv3 1 ipv6 area 2
+ ip ospf network point-to-point
+ ospfv3 network point-to-point
+ ip address 10.255.255.6 255.255.255.255
+ ipv6 address 2001:db8:acad:ffff::6/128
+ no shutdown
+! --- LAN simulada (loopback)
+interface Loopback1
+ ip address 10.2.1.1 255.255.255.0
+ ipv6 address 2001:db8:acad:201::1/64
+ ip ospf 1 area 2
+ ospfv3 1 ipv6 area 2
+ ip ospf network point-to-point
+ ospfv3 network point-to-point
+ no shutdown
+interface Ethernet0/0
+ description Link para ABR2
+ ip address 10.2.21.2 255.255.255.252
+ ipv6 address 2001:db8:acad:221::2/64
+ ip ospf 1 area 2
+ ospfv3 1 ipv6 area 2
+ bandwidth 1000000
+ no shutdown
+interface Ethernet0/1
+ description Link para ABR1
+ ip address 10.2.22.2 255.255.255.252
+ ipv6 address 2001:db8:acad:222::2/64
+ ip ospf 1 area 2
+ ospfv3 1 ipv6 area 2
+ bandwidth 100000
+ no shutdown
+! --- OSPFv2 (IPv4)
+! >>>>> DEFEITO B4: sem 'auto-cost reference-bandwidth 10000' (vale para TODOS os roteadores)
+router ospf 1
+ router-id 21.21.21.21
+! --- OSPFv3 com address-family (IPv6)
+router ospfv3 1
+ address-family ipv6 unicast
+  router-id 21.21.21.21
+  auto-cost reference-bandwidth 10000
+ exit-address-family
+end

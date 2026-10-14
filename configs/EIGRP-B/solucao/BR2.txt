@@ -1,0 +1,50 @@
+! ==========================================================
+! Lab EIGRP-B - BR2 - SOLUCAO - todos os tickets corrigidos
+! Plataforma testada: Cisco IOL-XE 17.18 (CML2). Interfaces Ethernet0/x.
+! Uso: entre em 'configure terminal' e cole o bloco abaixo.
+! ==========================================================
+hostname BR2
+no ip domain lookup
+ipv6 unicast-routing
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+interface Loopback0
+ ip address 10.255.255.6 255.255.255.255
+ ipv6 address 2001:db8:acad:ffff::6/128
+ no shutdown
+interface Loopback1
+ ip address 10.12.0.1 255.255.255.0
+ ipv6 address 2001:db8:acad:1200::1/64
+ no shutdown
+interface Loopback2
+ ip address 10.12.1.1 255.255.255.0
+ ipv6 address 2001:db8:acad:1201::1/64
+ no shutdown
+interface Loopback3
+ ip address 10.12.2.1 255.255.255.0
+ ipv6 address 2001:db8:acad:1202::1/64
+ no shutdown
+interface Loopback4
+ ip address 10.12.3.1 255.255.255.0
+ ipv6 address 2001:db8:acad:1203::1/64
+ no shutdown
+interface Ethernet0/0
+ description Link para CORE2
+ ip address 10.0.15.2 255.255.255.252
+ ipv6 address 2001:db8:acad:015::2/64
+ no shutdown
+router eigrp EMPRESA
+ address-family ipv4 unicast autonomous-system 100
+  af-interface Ethernet0/0
+   summary-address 10.12.0.0 255.255.252.0
+  exit-af-interface
+  network 10.0.0.0
+  eigrp router-id 12.12.12.12
+  eigrp stub connected summary
+ exit-address-family
+ address-family ipv6 unicast autonomous-system 100
+  eigrp stub connected summary
+  eigrp router-id 12.12.12.12
+ exit-address-family
+end

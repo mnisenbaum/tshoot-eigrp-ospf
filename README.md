@@ -17,6 +17,7 @@ São **4 labs com defeitos plantados** e os **4 labs "solução"** correspondent
 | [`Lab_EIGRP-A.md`](Lab_EIGRP-A.md) · [`Lab_EIGRP-B.md`](Lab_EIGRP-B.md) | Roteiros do instrutor dos labs EIGRP |
 | [`Lab_OSPF-A.md`](Lab_OSPF-A.md) · [`Lab_OSPF-B.md`](Lab_OSPF-B.md) | Roteiros do instrutor dos labs OSPF |
 | [`PLANO_Aula_Tshoot_EIGRP_OSPF.md`](PLANO_Aula_Tshoot_EIGRP_OSPF.md) | Planejamento da aula, tempos e decisões |
+| [`configs/`](configs/) | **Configurações IOS de todos os nós** (com problemas e solução) para montar no EVE-NG, PNETLab, GNS3 ou equipamento real: um `.md` por topologia ([EIGRP-A](configs/EIGRP-A.md) · [EIGRP-B](configs/EIGRP-B.md) · [OSPF-A](configs/OSPF-A.md) · [OSPF-B](configs/OSPF-B.md)) e um `.txt` por nó |
 | [`topologias_cml/`](topologias_cml/) | 8 topologias para importar no CML2 (`*_PROBLEMAS` e `*_SOLUCAO`) |
 | [`topologias_drawio/`](topologias_drawio/) | 8 diagramas editáveis no draw.io |
 | [`topologias_png/`](topologias_png/) | 8 figuras. As versões `PROBLEMAS` marcam em vermelho onde estão os defeitos |
@@ -70,6 +71,9 @@ Cada lab tem também um ticket **bônus em IPv6**, que começa corrigido; o rote
 2. Ligue os dois labs do bloco (EIGRP-A + EIGRP-B, ou OSPF-A + OSPF-B) e espere convergir. O OSPF leva cerca de 40 segundos.
 3. Siga o roteiro `Lab_*.md` correspondente, um ticket por vez.
 4. Para recomeçar: *Stop → Wipe → Start* no CML2, ou aplique os blocos **Quebrar** dos roteiros.
+
+### Sem CML2? EVE-NG, PNETLab ou GNS3
+Monte a topologia com o cabeamento de [`configs/`](configs/README.md) e cole em cada nó a configuração de `configs/<LAB>/problemas/` (para treinar) ou `configs/<LAB>/solucao/` (para ver o lab funcionando). Com imagens IOL, os nomes de interface (`Ethernet0/x`) já batem. Com IOSv ou CSR, veja a tabela de conversão em [`configs/README.md`](configs/README.md).
 
 ### Ordem recomendada dos tickets
 | Lab | Ordem | Por quê |

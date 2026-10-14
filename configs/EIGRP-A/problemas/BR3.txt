@@ -1,0 +1,39 @@
+! ==========================================================
+! Lab EIGRP-A - BR3 - COM OS DEFEITOS PLANTADOS (linhas '! >>>>> DEFEITO' indicam cada um)
+! Plataforma testada: Cisco IOL-XE 17.18 (CML2). Interfaces Ethernet0/x.
+! Uso: entre em 'configure terminal' e cole o bloco abaixo.
+! ==========================================================
+! --- Nome do equipamento
+hostname BR3
+no ip domain lookup
+! --- Habilita roteamento IPv6 (pilha dupla)
+ipv6 unicast-routing
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+! --- Loopback0: endereco de gerencia / identificacao
+interface Loopback0
+ ip address 10.255.255.4 255.255.255.255
+ ipv6 address 2001:db8:acad:ffff::4/128
+ no shutdown
+! --- LAN simulada (loopback)
+interface Loopback1
+ ip address 10.13.1.1 255.255.255.0
+ ipv6 address 2001:db8:acad:1301::1/64
+ no shutdown
+interface Ethernet0/0
+ description Link para CORE1
+ ip address 10.0.13.2 255.255.255.252
+ ipv6 address 2001:db8:acad:013::2/64
+ no shutdown
+! --- EIGRP named mode - processo EMPRESA
+router eigrp EMPRESA
+! >>>>> DEFEITO A3: AS 1000 no AF IPv4 (dominio usa AS 100)
+ address-family ipv4 unicast autonomous-system 1000
+  network 10.0.0.0
+  eigrp router-id 13.13.13.13
+ exit-address-family
+ address-family ipv6 unicast autonomous-system 100
+  eigrp router-id 13.13.13.13
+ exit-address-family
+end

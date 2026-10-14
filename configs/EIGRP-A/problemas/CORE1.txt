@@ -1,0 +1,55 @@
+! ==========================================================
+! Lab EIGRP-A - CORE1 - COM OS DEFEITOS PLANTADOS (linhas '! >>>>> DEFEITO' indicam cada um)
+! Plataforma testada: Cisco IOL-XE 17.18 (CML2). Interfaces Ethernet0/x.
+! Uso: entre em 'configure terminal' e cole o bloco abaixo.
+! ==========================================================
+! --- Nome do equipamento
+hostname CORE1
+no ip domain lookup
+! --- Habilita roteamento IPv6 (pilha dupla)
+ipv6 unicast-routing
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+key chain EIGRP-KEYS
+ key 1
+  key-string CISCO123
+! --- Loopback0: endereco de gerencia / identificacao
+interface Loopback0
+ ip address 10.255.255.1 255.255.255.255
+ ipv6 address 2001:db8:acad:ffff::1/128
+ no shutdown
+! --- LAN simulada (loopback)
+interface Loopback1
+ ip address 10.1.1.1 255.255.255.0
+ ipv6 address 2001:db8:acad:101::1/64
+ no shutdown
+interface Ethernet0/0
+ description Link para CORE2
+ ip address 10.0.12.1 255.255.255.252
+ ipv6 address 2001:db8:acad:012::1/64
+ no shutdown
+interface Ethernet0/1
+ description Link para BR1
+ ip address 10.0.11.1 255.255.255.252
+ ipv6 address 2001:db8:acad:011::1/64
+ no shutdown
+interface Ethernet0/2
+ description Link para BR3
+ ip address 10.0.13.1 255.255.255.252
+ ipv6 address 2001:db8:acad:013::1/64
+ no shutdown
+! --- EIGRP named mode - processo EMPRESA
+router eigrp EMPRESA
+ address-family ipv4 unicast autonomous-system 100
+  af-interface Ethernet0/1
+   authentication mode md5
+   authentication key-chain EIGRP-KEYS
+  exit-af-interface
+  network 10.0.0.0
+  eigrp router-id 1.1.1.1
+ exit-address-family
+ address-family ipv6 unicast autonomous-system 100
+  eigrp router-id 1.1.1.1
+ exit-address-family
+end

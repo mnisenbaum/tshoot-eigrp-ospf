@@ -1,0 +1,26 @@
+! ==========================================================
+! Lab OSPF-B - ISP - COM OS DEFEITOS PLANTADOS (linhas '! >>>>> DEFEITO' indicam cada um)
+! Plataforma testada: Cisco IOL-XE 17.18 (CML2). Interfaces Ethernet0/x.
+! Uso: entre em 'configure terminal' e cole o bloco abaixo.
+! ==========================================================
+! --- Nome do equipamento
+hostname ISP
+no ip domain lookup
+! --- Habilita roteamento IPv6 (pilha dupla)
+ipv6 unicast-routing
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+! --- LAN simulada (loopback)
+interface Loopback1
+ ip address 8.8.8.8 255.255.255.255
+ ipv6 address 2001:4860:4860::8888/128
+interface Ethernet0/0
+ description Link para EDGE
+ ip address 203.0.113.2 255.255.255.252
+ ipv6 address 2001:db8:ffff::2/64
+ no shutdown
+! --- ISP: rota de retorno para a empresa
+ip route 10.0.0.0 255.0.0.0 203.0.113.1
+ipv6 route 2001:db8:acad::/48 2001:db8:ffff::1
+end

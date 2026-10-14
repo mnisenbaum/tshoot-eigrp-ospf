@@ -1,0 +1,59 @@
+! ==========================================================
+! Lab EIGRP-B - BR2 - COM OS DEFEITOS PLANTADOS (linhas '! >>>>> DEFEITO' indicam cada um)
+! Plataforma testada: Cisco IOL-XE 17.18 (CML2). Interfaces Ethernet0/x.
+! Uso: entre em 'configure terminal' e cole o bloco abaixo.
+! ==========================================================
+! --- Nome do equipamento
+hostname BR2
+no ip domain lookup
+! --- Habilita roteamento IPv6 (pilha dupla)
+ipv6 unicast-routing
+line con 0
+ exec-timeout 0 0
+ logging synchronous
+! --- Loopback0: endereco de gerencia / identificacao
+interface Loopback0
+ ip address 10.255.255.6 255.255.255.255
+ ipv6 address 2001:db8:acad:ffff::6/128
+ no shutdown
+! --- LAN simulada (loopback)
+interface Loopback1
+ ip address 10.12.0.1 255.255.255.0
+ ipv6 address 2001:db8:acad:1200::1/64
+ no shutdown
+! --- LAN simulada (loopback)
+interface Loopback2
+ ip address 10.12.1.1 255.255.255.0
+ ipv6 address 2001:db8:acad:1201::1/64
+ no shutdown
+! --- LAN simulada (loopback)
+interface Loopback3
+ ip address 10.12.2.1 255.255.255.0
+ ipv6 address 2001:db8:acad:1202::1/64
+ no shutdown
+! --- LAN simulada (loopback)
+interface Loopback4
+ ip address 10.12.3.1 255.255.255.0
+ ipv6 address 2001:db8:acad:1203::1/64
+ no shutdown
+interface Ethernet0/0
+ description Link para CORE2
+ ip address 10.0.15.2 255.255.255.252
+ ipv6 address 2001:db8:acad:015::2/64
+ no shutdown
+! --- EIGRP named mode - processo EMPRESA
+router eigrp EMPRESA
+ address-family ipv4 unicast autonomous-system 100
+  af-interface Ethernet0/0
+! >>>>> DEFEITO B3: sumario 0/0 vira default interna (AD 90)
+   summary-address 0.0.0.0 0.0.0.0
+  exit-af-interface
+  network 10.0.0.0
+  eigrp router-id 12.12.12.12
+  eigrp stub connected summary
+ exit-address-family
+ address-family ipv6 unicast autonomous-system 100
+  eigrp stub connected summary
+  eigrp router-id 12.12.12.12
+ exit-address-family
+end
